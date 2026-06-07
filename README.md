@@ -1,2 +1,49 @@
 # carbon-footprint-tracker
-Django web-app for tracking personal carbon footprint with data visualization
+Веб-сервис для отслеживания личного углеродного следа. Помогает эко-активным пользователям визуализировать влияние их повседневных привычек (транспорт, энергия, питание) на окружающую среду через расчёт выбросов CO₂, постановку целей и наглядные графики.
+
+**Рабочая версия:** [Ссылка появится после развёртывания на PythonAnywhere]
+
+# Технологический стек
+- **Backend:** Python 3.10+, Django 4.2
+- **База данных:** SQLite (локально), PostgreSQL (продакшн)
+- **Frontend:** HTML5, CSS3, Bootstrap 5, Chart.js (визуализация)
+- **Внешние API:** Open-Meteo (погодные данные для корректировки выбросов)
+- **Аналитика:** Pandas (группировка и агрегация данных)
+
+# Скриншоты
+*(Раздел будет заполнен по мере разработки интерфейса)*
+- [ ] Дашборд с графиками
+- [ ] Форма добавления активности
+- [ ] Административная панель
+
+# Как запустить проект локально
+
+1. Клонируйте репозиторий:
+   git clone https://github.com/sunastaaa/carbon-footprint-tracker.git
+   cd carbon-footprint-tracker
+
+2. Создайте и активируйте виртуальное окружение:
+   # Для Windows
+   python -m venv venv
+   venv\Scripts\activate
+
+   # Для macOS/Linux
+   python3 -m venv venv
+   source venv/bin/activate
+
+3. Установите зависимости:
+   pip install -r requirements.txt
+
+4. Примените миграции базы данных:
+   python manage.py migrate
+
+5. Создайте суперпользователя:
+   python manage.py createsuperuser
+
+6. Запустите сервер разработки:
+   python manage.py runserver
+
+7. Откройте в браузере: http://127.0.0.1:8000/
+
+
+Проект разработан в рамках итоговой работы по дисциплине "Разработка веб-приложений на Python".
