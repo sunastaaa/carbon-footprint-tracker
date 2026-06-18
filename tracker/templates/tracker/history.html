@@ -1,0 +1,59 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}История{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>История активностей</h2>
+                <a href="{% url 'tracker:add_log' %}" class="btn btn-primary">Добавить</a>
+            </div>
+            
+            {% if logs %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Активность</th>
+                                <th>Категория</th>
+                                <th>Количество</th>
+                                <th>Выброс CO₂</th>
+                                <th>Комментарий</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.date|date:"d.m.Y" }}</td>
+                                <td>{{ log.activity.name }}</td>
+                                <td>{{ log.activity.get_category_display }}</td>
+                                <td>{{ log.value }} {{ log.activity.unit }}</td>
+                                <td><strong>{{ log.emission|floatformat:2 }} кг</strong></td>
+                                <td>{{ log.notes|default:"—" }}</td>
+                                <td>
+                                    <a href="{% url 'tracker:delete_log' log.id %}" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Удалить эту запись?')">
+                                        ️
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <h4 class="text-muted">У вас пока нет записей</h4>
+                    <p class="text-muted">Добавьте первую активность, чтобы начать отслеживать свой углеродный след</p>
+                    <a href="{% url 'tracker:add_log' %}" class="btn btn-primary">Добавить активность</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

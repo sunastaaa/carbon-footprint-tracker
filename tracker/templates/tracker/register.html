@@ -1,0 +1,49 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4">
+            <h2 class="mb-4 text-center">Регистрация</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Имя пользователя</label>
+                    <input type="text" name="username" id="id_username" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_password1" class="form-label">Пароль</label>
+                    <input type="password" name="password1" id="id_password1" class="form-control" required>
+                    <div class="form-text">Минимум 8 символов</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_password2" class="form-label">Подтверждение пароля</label>
+                    <input type="password" name="password2" id="id_password2" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Зарегистрироваться</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

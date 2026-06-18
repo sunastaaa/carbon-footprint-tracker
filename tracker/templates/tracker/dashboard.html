@@ -1,0 +1,116 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Дашборд{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="text-white mb-4">Ваш углеродный след за {{ month_name }}</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <h5 class="text-muted">Общий выброс CO₂</h5>
+            <h2 class="text-primary">{{ total_emission }} кг</h2>
+            <p class="text-muted">за текущий месяц</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <h5 class="text-muted">Прогресс цели</h5>
+            <h2 class="{% if progress_percent > 100 %}text-danger{% elif progress_percent > 80 %}text-warning{% else %}text-success{% endif %}">
+                {{ progress_percent }}%
+            </h2>
+            <div class="progress mt-2" style="height: 20px;">
+                <div class="progress-bar {% if progress_percent > 100 %}bg-danger{% elif progress_percent > 80 %}bg-warning{% else %}bg-success{% endif %}" 
+                     role="progressbar" 
+                     style="width: {{ progress_percent }}%">
+                </div>
+            </div>
+            <p class="text-muted mt-2">Лимит: {{ goal.monthly_limit }} кг/мес</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <h5 class="text-muted">Эквивалент</h5>
+            <h2 class="text-success">{{ trees_equivalent }}</h2>
+            <p class="text-muted">деревьев нужно для поглощения за год</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="mb-3">Распределение по категориям</h5>
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h5 class="mb-3">Динамика за 30 дней</h5>
+            <canvas id="dailyChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card p-4">
+            <h5 class="mb-3"> Быстрые действия</h5>
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="{% url 'tracker:add_log' %}" class="btn btn-primary btn-lg">Добавить активность</a>
+                <a href="{% url 'tracker:history' %}" class="btn btn-outline-primary btn-lg">Посмотреть историю</a>
+                <a href="{% url 'tracker:set_goal' %}" class="btn btn-outline-success btn-lg">Изменить цель</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_labels|safe }},
+            datasets: [{
+                data: {{ category_values|safe }},
+                backgroundColor: ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a'],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+    new Chart(dailyCtx, {
+        type: 'line',
+        data: {
+            labels: {{ daily_labels|safe }},
+            datasets: [{
+                label: 'Выброс CO₂ (кг)',
+                data: {{ daily_values|safe }},
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}

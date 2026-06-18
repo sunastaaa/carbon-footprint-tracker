@@ -1,0 +1,39 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4">
+            <h2 class="mb-4 text-center">Вход в систему</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Неправильный логин или пароль
+                    </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Имя пользователя</label>
+                    <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Пароль</label>
+                    <input type="password" name="password" id="id_password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Войти</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Установить цель{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h2 class="mb-4"> Установка месячной цели</h2>
+            
+            <div class="alert alert-info">
+                <strong>Текущая цель:</strong> {{ goal.monthly_limit }} кг CO₂ в месяц
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="monthly_limit" class="form-label">Новый лимит (кг CO₂ в месяц)</label>
+                    <input type="number" step="0.1" name="monthly_limit" id="monthly_limit" 
+                           class="form-control" value="{{ goal.monthly_limit }}" required>
+                    <div class="form-text">
+                        Средний углеродный след россиянина - около 350 кг CO₂ в месяц. 
+                        Попробуйте установить цель ниже этого значения!
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">Сохранить</button>
+                    <a href="{% url 'tracker:dashboard' %}" class="btn btn-outline-secondary btn-lg">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
