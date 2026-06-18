@@ -21,6 +21,7 @@
                                 <th>Категория</th>
                                 <th>Количество</th>
                                 <th>Выброс CO₂</th>
+                                <th>Город</th>
                                 <th>Комментарий</th>
                                 <th>Действие</th>
                             </tr>
@@ -33,6 +34,7 @@
                                 <td>{{ log.activity.get_category_display }}</td>
                                 <td>{{ log.value }} {{ log.activity.unit }}</td>
                                 <td><strong>{{ log.emission|floatformat:2 }} кг</strong></td>
+                                <td>{{ log.city|default:"—" }}</td>
                                 <td>{{ log.notes|default:"—" }}</td>
                                 <td>
                                     <a href="{% url 'tracker:delete_log' log.id %}" 

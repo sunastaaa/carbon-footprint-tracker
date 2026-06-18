@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 
 class ActivityType(models.Model):
-    """Справочник типов активностей с коэффициентами выбросов CO₂"""
     CATEGORY_CHOICES = [
         ('transport', 'Транспорт'),
         ('energy', 'Энергия'),
@@ -26,11 +25,11 @@ class ActivityType(models.Model):
 
 
 class CarbonLog(models.Model):
-    """Запись пользователя об активности"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carbon_logs', verbose_name="Пользователь")
     activity = models.ForeignKey(ActivityType, on_delete=models.PROTECT, verbose_name="Тип активности")
     value = models.FloatField(verbose_name="Количество")
     date = models.DateField(verbose_name="Дата активности")
+    city = models.CharField(max_length=50, blank=True, null=True, verbose_name="Город")  # ← НОВОЕ ПОЛЕ
     notes = models.CharField(max_length=200, blank=True, null=True, verbose_name="Комментарий")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания записи")
 
@@ -44,12 +43,10 @@ class CarbonLog(models.Model):
 
     @property
     def co2_emission(self):
-        """Вычисляемое поле: общий выброс CO₂ для этой записи"""
         return round(self.value * self.activity.co2_factor, 2)
 
 
 class EcoGoal(models.Model):
-    """Месячная цель пользователя по снижению выбросов"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='eco_goal', verbose_name="Пользователь")
     monthly_limit = models.FloatField(verbose_name="Лимит кг CO₂ в месяц")
     start_date = models.DateField(verbose_name="Дата начала отслеживания")
@@ -65,7 +62,6 @@ class EcoGoal(models.Model):
 
     @property
     def current_month_total(self):
-        """Сумма выбросов за текущий месяц"""
         from django.utils import timezone
         now = timezone.now()
         logs = self.user.carbon_logs.filter(date__year=now.year, date__month=now.month)
@@ -73,7 +69,6 @@ class EcoGoal(models.Model):
 
     @property
     def progress_percent(self):
-        """Процент использования лимита"""
         if self.monthly_limit == 0:
             return 0
         percent = (self.current_month_total / self.monthly_limit) * 100

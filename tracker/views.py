@@ -25,7 +25,6 @@ def register(request):
 def dashboard(request):
     now = timezone.now()
 
-    # Получаем все записи пользователя за текущий месяц
     month_logs = CarbonLog.objects.filter(
         user=request.user,
         date__year=now.year,
@@ -34,10 +33,8 @@ def dashboard(request):
         emission=F('value') * F('activity__co2_factor')
     )
 
-    # Общий выброс за месяц
     total_emission = month_logs.aggregate(total=Sum('emission'))['total'] or 0
 
-    # Группировка по категориям для круговой диаграммы
     by_category = month_logs.values(
         'activity__category',
         'activity__name'
@@ -45,7 +42,6 @@ def dashboard(request):
         category_total=Sum('emission')
     ).order_by('-category_total')
 
-    # Динамика по дням (последние 30 дней)
     thirty_days_ago = now - timedelta(days=30)
     daily_logs = CarbonLog.objects.filter(
         user=request.user,
@@ -56,7 +52,6 @@ def dashboard(request):
         daily_total=Sum('emission')
     ).order_by('date')
 
-    # Получаем или создаём цель пользователя
     goal, created = EcoGoal.objects.get_or_create(
         user=request.user,
         defaults={
@@ -65,7 +60,6 @@ def dashboard(request):
         }
     )
 
-    # Прогресс выполнения цели
     progress_percent = goal.progress_percent if goal.monthly_limit > 0 else 0
 
     trees_equivalent = round(total_emission * 12 / 22, 1)
@@ -86,26 +80,43 @@ def dashboard(request):
 
 @login_required
 def add_carbon_log(request):
+    from .utils.weather import get_weather_correction, get_cities_choices
+
     if request.method == 'POST':
         activity_id = request.POST.get('activity')
         value = float(request.POST.get('value'))
         date = request.POST.get('date')
+        city = request.POST.get('city', '')
         notes = request.POST.get('notes', '')
 
         activity = get_object_or_404(ActivityType, id=activity_id)
+
+        weather_info = None
+        if city and activity.category == 'transport':
+            weather_info = get_weather_correction(city)
+            if weather_info['success']:
+                value = value * weather_info['correction']
+                weather_note = f"[Погода: {weather_info['temperature']}°C, {weather_info['weather_description']}, корректировка ×{weather_info['correction']}]"
+                notes = f"{notes} {weather_note}".strip() if notes else weather_note
 
         CarbonLog.objects.create(
             user=request.user,
             activity=activity,
             value=value,
             date=date,
+            city=city,
             notes=notes
         )
 
         return redirect('tracker:dashboard')
 
     activities = ActivityType.objects.all().order_by('category', 'name')
-    return render(request, 'tracker/add_log.html', {'activities': activities})
+    cities = get_cities_choices()
+
+    return render(request, 'tracker/add_log.html', {
+        'activities': activities,
+        'cities': cities,
+    })
 
 
 @login_required

@@ -35,6 +35,20 @@
                 </div>
                 
                 <div class="mb-3">
+                    <label for="city" class="form-label">Город (для корректировки по погоде)</label>
+                    <select name="city" id="city" class="form-select">
+                        <option value="">-- Не указывать --</option>
+                        {% for key, name in cities %}
+                            <option value="{{ key }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-text">
+                        Для транспортных активностей система учтёт погоду: 
+                        холод и осадки увеличивают расход топлива
+                    </div>
+                </div>
+                
+                <div class="mb-3">
                     <label for="date" class="form-label">Дата</label>
                     <input type="date" name="date" id="date" class="form-control" value="{{ today }}" required>
                 </div>
