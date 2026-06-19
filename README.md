@@ -19,7 +19,7 @@
 | Компонент | Технология |
 |-----------|-----------|
 | Backend | Python 3.14, Django 6.0.6 |
-| База данных | SQLite (локально), PostgreSQL (продакшн) |
+| База данных | SQLite |
 | Frontend | HTML5, CSS3, Bootstrap 5, Chart.js |
 | Внешний API | Open-Meteo (погодные данные) |
 | Аналитика | Pandas (группировка и агрегация данных) |
