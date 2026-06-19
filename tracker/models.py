@@ -29,7 +29,7 @@ class CarbonLog(models.Model):
     activity = models.ForeignKey(ActivityType, on_delete=models.PROTECT, verbose_name="Тип активности")
     value = models.FloatField(verbose_name="Количество")
     date = models.DateField(verbose_name="Дата активности")
-    city = models.CharField(max_length=50, blank=True, null=True, verbose_name="Город")  # ← НОВОЕ ПОЛЕ
+    city = models.CharField(max_length=50, blank=True, null=True, verbose_name="Город")
     notes = models.CharField(max_length=200, blank=True, null=True, verbose_name="Комментарий")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания записи")
 
